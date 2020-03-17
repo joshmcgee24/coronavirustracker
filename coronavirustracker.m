@@ -1,4 +1,4 @@
-%Coronavirus Tracker - Massachusetts + United States - Joshua McGee
+%Coronavirus Tracker - United States - Joshua McGee
 
 %Created to track the spread of Coronavirus (COVID-19) in the United States
 %Data is stored online and is provided via JHU CSSE from various sources including:
