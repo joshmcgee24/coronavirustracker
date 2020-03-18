@@ -1,10 +1,9 @@
 %Coronavirus Tracker - States Within United States - Joshua McGee
-
 %Created to track the spread of Coronavirus (COVID-19) in States within the
 %United States
 %Data is stored online and is provided via JHU CSSE from various sources including:
 %"the World Health Organization (WHO), DXY.cn. Pneumonia. 2020, BNO News,
-%National Health Commission of the People’s Republic of China (NHC),
+%National Health Commission of the People痴 Republic of China (NHC),
 %China CDC (CCDC), Hong Kong Department of Health, Macau Government, Taiwan CDC, US CDC,
 %Government of Canada, Australia Government Department of Health,
 %European Centre for Disease Prevention and Control (ECDC) and Ministry of
@@ -12,8 +11,9 @@
 %data set is updated every day and an additional column is added for the
 %previous days data
 
+%Important Settings:
 state = 'Massachusetts'; %state to display data for
-dp = 5;%number of days to predict
+dp = 1;%number of days to predict
 prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
 
 result=webread('https://proxy.hxlstandard.org/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Confirmed.csv&filename=time_series_2019-ncov-Confirmed.csv');
@@ -26,22 +26,15 @@ data(empties) = {NaN};
 countries = cellstr(data(:,2));
 data1(empties1) = {NaN};
 countries1 = cellstr(data1(:,2));
-
 % US DATA
 USempties = cellfun('isempty',strfind(countries,'US'));
-countries(empties) = {NaN};
 USdata1 = data(~USempties,:);
 USempties1 = cellfun('isempty',strfind(countries1,'US'));
-countries1(empties1) = {NaN};
 USdata2 = data1(~USempties1,:);
-if isempty(find(contains(USdata2,state)))
-    disp('State Not Found')
-else
-end
 first_day = datetime(2020,1,22);
 cols = size(USdata1);
-USinfecteddata = cellfun(@str2num,USdata1(:,5:cols(2)));
-USdeathdata = cellfun(@str2num,USdata2(:,5:cols(2)));
+USinfecteddata = str2double(USdata1(:,5:cols(2)));
+USdeathdata = str2double(USdata2(:,5:cols(2)));
 cols1 = size(USinfecteddata);
 UStotalinfected = zeros(1,cols1(2));
 UStotaldead = zeros(1,cols1(2));
@@ -49,15 +42,14 @@ Statetotalinfected = zeros(1,cols1(2));
 Statetotaldead = zeros(1,cols1(2));
 for i = 1:cols1(2)
     UStotalinfected(i) = sum(USinfecteddata(:,i));
-    Statetotalinfected(i) = sum(USinfecteddata(find(contains(USdata2,state)),i));
+    Statetotalinfected(i) = sum(USinfecteddata(find(strcmp(USdata2,state)),i));
     UStotaldead(i) = sum(USdeathdata(:,i));
-    Statetotaldead(i) = sum(USdeathdata(find(contains(USdata2,state)),i));
+    Statetotaldead(i) = sum(USdeathdata(find(strcmp(USdata2,state)),i));
 end
 cols2 = size(result);
 last_day = datetime(result{1,cols2(2)},'InputFormat','MM/dd/yy');
 time = first_day:last_day;
-
-Statedeathrate = Statetotaldead/Statetotalinfected*100;
+Statedeathrate = max(Statetotaldead)/max(Statetotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
 if prediction_enabled == 1
     [x, y] = prepareCurveData([0:1:daytotal], Statetotalinfected);
@@ -97,9 +89,7 @@ else
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str2);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
 end
-
 fprintf('--------- State Data ----------------- \n')
-deathrate = Statetotaldead/Statetotalinfected*100;
 caseperday = diff(Statetotalinfected)./diff(day(time));
 firstday = datetime(2020,3,10);
 timematrix = firstday:last_day;
@@ -112,4 +102,4 @@ if prediction_enabled == 1
     T
 end
 fprintf('As of: %s : ----------------------------------\n',last_day)
-fprintf('Infected: %0.0f, Dead: %0.0f, Death Rate: %0.4f \n',max(Statetotalinfected),max(Statetotaldead),deathrate)
+fprintf('Infected: %0.0f, Dead: %0.0f, Death Rate: %0.4f \n',max(Statetotalinfected),max(Statetotaldead),Statedeathrate)
