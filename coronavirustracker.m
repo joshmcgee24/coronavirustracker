@@ -2,7 +2,7 @@
 %Created to track the spread of Coronavirus (COVID-19) 
 %Data is stored online and is provided via JHU CSSE from various sources including:
 %"the World Health Organization (WHO), DXY.cn. Pneumonia. 2020, BNO News,
-%National Health Commission of the People痴 Republic of China (NHC),
+%National Health Commission of the People? Republic of China (NHC),
 %China CDC (CCDC), Hong Kong Department of Health, Macau Government, Taiwan CDC, US CDC,
 %Government of Canada, Australia Government Department of Health,
 %European Centre for Disease Prevention and Control (ECDC) and Ministry of
@@ -48,9 +48,11 @@ Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
 if prediction_enabled == 1
     [x, y] = prepareCurveData([0:1:daytotal], Countrytotalinfected);
-    model = fittype('1/(A+B*exp(-C*x))','independent','x','dependent','y');
+    model = fittype('1/(A+C*exp(-B*x))','independent','x','dependent','y');
     ftype = fittype(model);
     fopt = fitoptions(ftype);
+    fopt.Algorithm = 'Levenberg-Marquardt';
+    fopt.Robust = 'Bisquare';
     fopt.StartPoint = [1 1 1];
     [fitresult, rsquare] = fit(x, y, ftype, fopt);
     newtime = [0:1:daytotal+dp];
