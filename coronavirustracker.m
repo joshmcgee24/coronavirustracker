@@ -12,7 +12,7 @@
 
 %important settings:
 country = 'US'; %Country to display data for
-dp = 3;%number of days to predict
+dp = 2;%number of days to predict
 prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
 
 result=webread('https://proxy.hxlstandard.org/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Confirmed.csv&filename=time_series_2019-ncov-Confirmed.csv');
@@ -44,7 +44,7 @@ end
 cols2 = size(result);
 last_day = datetime(result{1,cols2(2)},'InputFormat','MM/dd/yy');
 time = first_day:last_day;
-Countrydeathrate = Countrytotaldead/Countrytotalinfected*100;
+Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
 if prediction_enabled == 1
     [x, y] = prepareCurveData([0:1:daytotal], Countrytotalinfected);
@@ -85,7 +85,6 @@ else
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
 end
 fprintf('--------- Country Data ----------------- \n')
-deathrate = Countrytotaldead/Countrytotalinfected*100;
 caseperday = diff(Countrytotalinfected)./diff(day(time));
 firstday = datetime(2020,3,10);
 timematrix = firstday:last_day;
@@ -98,4 +97,4 @@ if prediction_enabled == 1
     T
 end
 fprintf('As of: %s : ----------------------------------\n',last_day)
-fprintf('Infected: %0.0f, Dead: %0.0f, Death Rate: %0.4f \n',max(Countrytotalinfected),max(Countrytotaldead),deathrate)
+fprintf('Infected: %0.0f, Dead: %0.0f, Death Rate: %0.4f \n',max(Countrytotalinfected),max(Countrytotaldead),Countrydeathrate)
