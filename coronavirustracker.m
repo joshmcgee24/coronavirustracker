@@ -32,8 +32,13 @@ Countryempties1 = cellfun('isempty',strfind(countries1,country));
 Countrydata2 = data1(~Countryempties1,:);
 first_day = datetime(2020,1,22);
 cols = size(Countrydata1);
-Countryinfecteddata = str2double(Countrydata1((1:52),5:cols(2)));
-Countrydeathdata = str2double(Countrydata2((1:52),5:cols(2)));
+if strfind(country,'US')
+    Countryinfecteddata = str2double(Countrydata1((1:52),5:cols(2)));
+    Countrydeathdata = str2double(Countrydata2((1:52),5:cols(2)));
+else
+    Countryinfecteddata = str2double(Countrydata1(:,5:cols(2)));
+    Countrydeathdata = str2double(Countrydata2(:,5:cols(2)));
+end
 cols1 = size(Countryinfecteddata);
 Countrytotalinfected = zeros(1,cols1(2));
 Countrytotaldead = zeros(1,cols1(2));
