@@ -72,7 +72,6 @@ infectedtable = removevars(times_conf_country,[{'GroupCount'},vars(contains(vars
 countrytable = infectedtable(strcmp(infectedtable.("Country/Region"),country), :);
 deathtable = removevars(times_conf_country1,[{'GroupCount'},vars1(contains(vars1,"remove_"))]);
 countrytable1 = deathtable(strcmp(deathtable.("Country/Region"),country), :);
-cols2 = size(countrytable1);
 countrytable = countrytable(:,4:end);
 countrytable1 = countrytable1(:,4:end);
 cols2 = size(countrytable1);
@@ -83,12 +82,13 @@ for i = 1:cols1(2)
     Countrytotalinfected(i) = table2array(countrytable(1,i));
     Countrytotaldead(i) = table2array(countrytable1(1,i));
 end
-cols2 = size(result);
+warning('off','all')
 last_day = datetime(countrytable.Properties.VariableNames(end),'InputFormat','MM/dd/yy');
 first_day = datetime(2020,1,22);
 time = first_day:last_day;
 Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
+
 if prediction_enabled == 1
     beta0 = [max(Countrytotalinfected) 0.5 max(Countrytotalinfected)];
     [x, y] = prepareCurveData([0:1:daytotal], Countrytotalinfected);
@@ -140,3 +140,34 @@ if prediction_enabled == 1
 end
 fprintf('As of: %s : ----------------------------------\n',last_day)
 fprintf('Infected: %0.0f, Dead: %0.0f, Death Rate: %0.4f \n',max(Countrytotalinfected),max(Countrytotaldead),Countrydeathrate)
+
+%plotting comparison of all countries
+countries = groupsummary(times_conf_country,"Country/Region", "max");
+vars = countries.Properties.VariableNames;
+countries = removevars(countries,[{'GroupCount'},vars(contains(vars,"remove"))]);
+countries1 = countries(:,5:end);
+cols1 = size(countries1);
+Countrytotalinfected = zeros(cols1(1),cols1(2));
+for i = 1:cols1(1)
+for j = 1:cols1(2)
+    Countrytotalinfected(i,j) = table2array(countries1(i,j));
+end
+end
+T = table(countries(:,1),max(Countrytotalinfected')');
+T.Properties.VariableNames = {'Country','Cases'};
+T
+[temp,originalpos] = sort(max(Countrytotalinfected')', 'descend' );
+
+figure
+%plot five countries with most cases
+for i = 2:6
+    plot(time,Countrytotalinfected(originalpos(i),:),'LineWidth',4);
+    hold on
+    legendInfo{i-1} = sprintf('%s',countries{originalpos(i), 1}); 
+end
+t = floor(now);
+d = datetime(t,'ConvertFrom','datenum');
+xlim([datetime(2020,2,15) d])
+title('5 Countries with Most COVID-19 Cases')
+set(gca,'FontSize',9,'Fontweight','Bold')
+legend(legendInfo)
