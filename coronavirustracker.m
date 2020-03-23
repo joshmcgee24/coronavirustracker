@@ -1,3 +1,4 @@
+function CoronaVirusTrack(country)
 % Coronavirus Tracker - Country Tracker - Joshua McGee
 % Created to track the spread of Coronavirus (COVID-19) 
 % Data is stored online and is provided via JHU CSSE from various sources including:
@@ -126,7 +127,7 @@ else
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str2);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
 end
-fprintf('--------- Country Data ----------------- \n')
+fprintf('--------- %s Data ----------------- \n',country)
 caseperday = diff(Countrytotalinfected)./diff(day(time));
 firstday = datetime(2020,3,10);
 timematrix = firstday:last_day;
@@ -148,9 +149,16 @@ countries = removevars(countries,[{'GroupCount'},vars(contains(vars,"remove"))])
 countries1 = countries(:,5:end);
 cols1 = size(countries1);
 Countrytotalinfected = zeros(cols1(1),cols1(2));
+countries2 = groupsummary(times_conf_country1,"Country/Region", "max");
+vars = countries2.Properties.VariableNames;
+countries2 = removevars(countries2,[{'GroupCount'},vars(contains(vars,"remove"))]);
+countries3 = countries2(:,5:end);
+cols2 = size(countries3);
+Countrytotaldead = zeros(cols2(1),cols2(2));
 for i = 1:cols1(1)
 for j = 1:cols1(2)
     Countrytotalinfected(i,j) = table2array(countries1(i,j));
+    Countrytotaldead(i,j) = table2array(countries3(i,j));
 end
 end
 T = table(countries(:,1),max(Countrytotalinfected')');
@@ -171,3 +179,40 @@ xlim([datetime(2020,2,15) d])
 title('5 Countries with Most COVID-19 Cases')
 set(gca,'FontSize',9,'Fontweight','Bold')
 legend(legendInfo)
+
+infected = zeros(10,1);
+for i = 1:10
+    infected(i) = Countrytotalinfected(originalpos(i),end);
+    legendInfo2{i} = sprintf('%s',countries{originalpos(i), 1}); 
+end
+figure
+P = pie(infected,legendInfo2);
+hold on
+pText = findobj(P,'Type','text');
+percentValues = infected./(sum(infected))*100;
+percentValues = mat2cell(percentValues',1,10);
+txt = legendInfo2;
+str1 = sprintf('Proportion of Cases | Total World Cases: %0.0f | Total World Dead: %0.0f',sum(sum(Countrytotalinfected(:,end))),sum(sum(Countrytotaldead(:,end))));
+title(str1)
+hold off
+
+T1 = table(countries(:,1),max(Countrytotaldead')');
+T1.Properties.VariableNames = {'Country','Dead'};
+sortrows(T1,[2],{'descend'})
+[temp1,originalpos1] = sort(max(Countrytotaldead')', 'descend' );
+
+figure
+%plot five countries with most deaths
+for i = 2:6
+    plot(time,Countrytotaldead(originalpos1(i-1),:),'LineWidth',4);
+    hold on
+    legendInfo1{i-1} = sprintf('%s',countries{originalpos1(i-1), 1}); 
+end
+xlim([datetime(2020,2,15) d])
+title('5 Countries with Most COVID-19 Deaths')
+set(gca,'FontSize',9,'Fontweight','Bold')
+legend(legendInfo1)
+hold off
+
+fprintf('\n ---- World Statistics for: %s \n',last_day)
+fprintf('Total Cases: %d | Total Deaths: %d \n',sum(sum(Countrytotalinfected(:,end))),sum(sum(Countrytotaldead(:,end))))
