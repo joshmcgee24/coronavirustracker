@@ -155,7 +155,7 @@ end
 end
 T = table(countries(:,1),max(Countrytotalinfected')');
 T.Properties.VariableNames = {'Country','Cases'};
-T
+sortrows(T,[2],{'descend'})
 [temp,originalpos] = sort(max(Countrytotalinfected')', 'descend' );
 
 figure
