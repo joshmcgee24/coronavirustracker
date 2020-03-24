@@ -1,4 +1,3 @@
-function CoronaVirusTrack(country)
 % Coronavirus Tracker - Country Tracker - Joshua McGee
 % Created to track the spread of Coronavirus (COVID-19) 
 % Data is stored online and is provided via JHU CSSE from various sources including:
@@ -13,12 +12,12 @@ function CoronaVirusTrack(country)
 
 %important settings:
 country = "US"; %specify country to model
-dp = 7; %number of days to predict for
+dp = 3; %number of days to predict for
 prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
-result=webread('https://proxy.hxlstandard.org/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Confirmed.csv&filename=time_series_2019-ncov-Confirmed.csv','options','table');
-deathresult = webread('https://proxy.hxlstandard.org/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Deaths.csv&filename=time_series_2019-ncov-Deaths.csv','options','table');
+result=webread('https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv&filename=time_series_covid19_confirmed_global.csv','options','table');
+deathresult = webread('https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_deaths_global.csv&filename=time_series_covid19_deaths_global.csv','options','table');
 writetable(result,'result.txt','WriteVariableNames',false);
 writetable(deathresult,'deathresult.txt','WriteVariableNames',false);
 opts = detectImportOptions('result.txt', "TextType","string");
