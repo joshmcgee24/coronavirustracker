@@ -188,10 +188,15 @@ if world_enabled == 1
     for i = 1:cols1(1)
         for j = 1:cols1(2)
             Countrytotalinfected(i,j) = table2array(countries1(i,j));
+        end
+    end
+    for i = 1:cols2(1)
+        for j = 1:cols2(2)
             Countrytotaldead(i,j) = table2array(countries3(i,j));
         end
     end
-    T = table(countries(:,1),max(Countrytotalinfected')');
+    num_countries = numel(countries(:,1));
+    T = table(countries(:,1),Countrytotalinfected(1:num_countries,end));
     T.Properties.VariableNames = {'Country','Cases'};
     sortrows(T,[2],{'descend'})
     [temp,originalpos] = sort(max(Countrytotalinfected')', 'descend' );
