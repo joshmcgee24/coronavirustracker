@@ -67,7 +67,7 @@ vars1 = times_conf_country1.Properties.VariableNames;
 vars1 = regexprep(vars1,"^(sum_)(?=L(a|o))","remove_");
 vars1 = regexprep(vars1,"^(mean_)(?=[0-9])","remove_");
 vars1 = erase(vars1,{'sum_','mean_'});
-times_conf_country1.Properties.VariableNames = vars;
+times_conf_country1.Properties.VariableNames = vars1;
 infectedtable = removevars(times_conf_country,[{'GroupCount'},vars(contains(vars,"remove_"))]);
 countrytable = infectedtable(strcmp(infectedtable.("Country/Region"),country), :);
 deathtable = removevars(times_conf_country1,[{'GroupCount'},vars1(contains(vars1,"remove_"))]);
