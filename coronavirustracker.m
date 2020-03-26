@@ -22,14 +22,30 @@ writetable(result,'result.txt','WriteVariableNames',false);
 writetable(deathresult,'deathresult.txt','WriteVariableNames',false);
 opts = detectImportOptions('result.txt', "TextType","string");
 opts1 = detectImportOptions('deathresult.txt', "TextType","string");
-opts.VariableNamesLine = 1;
-opts.DataLines = [2,inf];
-opts.PreserveVariableNames = true;
-opts1.VariableNamesLine = 1;
-opts1.DataLines = [2,inf];
-opts1.PreserveVariableNames = true;
+
+first_day = datetime(2020,1,22);
+day_add = size(result);
+last_day = first_day+days(day_add(2)-5);
+time = first_day:last_day;
+
+C = cell(1,day_add(2));
+for i = 1:day_add(2)
+    if i == 1
+        C(i) = {'Province/State'};
+    elseif i == 2
+        C(i) = {'Country/Region'};
+    elseif i == 3
+        C(i) = {'Lat'};
+    elseif i == 4
+        C(i) = {'Long'};
+    else
+        C(i) = {sprintf('%s',time(i-4))};
+    end
+end
 times_conf = readtable('result.txt',opts);
 times_conf1 = readtable('deathresult.txt',opts);
+times_conf.Properties.VariableNames = C;
+times_conf1.Properties.VariableNames = C;
 times_conf.("Country/Region")(times_conf.("Country/Region") == "China") = "Mainland China";
 times_conf.("Country/Region")(times_conf.("Country/Region") == "Czechia") = "Czech Republic";
 times_conf.("Country/Region")(times_conf.("Country/Region") == "Iran (Islamic Republic of)") = "Iran";
@@ -94,9 +110,6 @@ for i = 1:length(infected)
 end
 startidx = find(startidx~=0, 1, 'first');
 warning('off','all')
-last_day = datetime(countrytable.Properties.VariableNames(end),'InputFormat','MM/dd/yy');
-first_day = datetime(2020,1,22);
-time = first_day:last_day;
 Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
 
