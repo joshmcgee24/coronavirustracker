@@ -39,7 +39,7 @@ for i = 1:day_add(2)
     elseif i == 4
         C(i) = {'Long'};
     else
-        C(i) = {sprintf('%s',time(i-4))};
+        C(i) = {sprintf('%s',datenum(time(i-4)))};
     end
 end
 times_conf = readtable('result.txt',opts);
@@ -216,10 +216,10 @@ if world_enabled == 1
     
     figure
     %plot five countries with most cases
-    for i = 2:6
+    for i = 1:5
         plot(time,Countrytotalinfected(originalpos(i),:),'LineWidth',4);
         hold on
-        legendInfo{i-1} = sprintf('%s',countries{originalpos(i), 1});
+        legendInfo{i} = sprintf('%s',countries{originalpos(i), 1});
     end
     t = floor(now);
     d = datetime(t,'ConvertFrom','datenum');
@@ -251,10 +251,10 @@ if world_enabled == 1
     
     figure
     %plot five countries with most deaths
-    for i = 2:6
-        plot(time,Countrytotaldead(originalpos1(i-1),:),'LineWidth',4);
+    for i = 1:5
+        plot(time,Countrytotaldead(originalpos1(i),:),'LineWidth',4);
         hold on
-        legendInfo1{i-1} = sprintf('%s',countries{originalpos1(i-1), 1});
+        legendInfo1{i} = sprintf('%s',countries{originalpos1(i), 1});
     end
     xlim([datetime(2020,2,15) d])
     title('5 Countries with Most COVID-19 Deaths')
