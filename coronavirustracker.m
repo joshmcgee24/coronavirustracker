@@ -39,7 +39,8 @@ for i = 1:day_add(2)
     elseif i == 4
         C(i) = {'Long'};
     else
-        C(i) = {sprintf('%s',datenum(time(i-4)))};
+        formatOut = 'mm_dd_yy';
+        C(i) = {sprintf('%s',datestr(datenum(time(i-4)),formatOut))};
     end
 end
 times_conf = readtable('result.txt',opts);
