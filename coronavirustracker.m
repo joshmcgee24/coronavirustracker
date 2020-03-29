@@ -40,11 +40,12 @@ for i = 1:day_add(2)
         C(i) = {'Long'};
     else
         formatOut = 'mm_dd_yy';
-        C(i) = {sprintf('%s',datestr(datenum(time(i-4)),formatOut))};
+        C(i) = {sprintf('x%s',datestr(datenum(time(i-4)),formatOut))};
     end
 end
 times_conf = readtable('result.txt',opts);
 times_conf1 = readtable('deathresult.txt',opts);
+matlab.lang.makeValidName(C);
 times_conf.Properties.VariableNames = C;
 times_conf1.Properties.VariableNames = C;
 times_conf.("Country_Region")(times_conf.("Country_Region") == "China") = "Mainland China";
@@ -73,24 +74,22 @@ times_conf1.("Country_Region")(times_conf1.("Province_State") == "St Martin") = 
 times_conf1.("Country_Region")(times_conf1.("Province_State") == "Saint Barthelemy") = "Saint Barthelemy";
 vars = times_conf.Properties.VariableNames;
 vars1 = times_conf1.Properties.VariableNames;
-times_conf_country = groupsummary(times_conf,"Country_Region",{'sum','mean'},vars(3:end));
-times_conf_country1 = groupsummary(times_conf1,"Country_Region",{'sum','mean'},vars1(3:end));
+times_conf_country = groupsummary(times_conf,"Country_Region",{'sum'},vars(3:end));
+times_conf_country1 = groupsummary(times_conf1,"Country_Region",{'sum'},vars1(3:end));
 vars = times_conf_country.Properties.VariableNames;
 vars = regexprep(vars,"^(sum_)(?=L(a|o))","remove_");
-vars = regexprep(vars,"^(mean_)(?=[0-9])","remove_");
-vars = erase(vars,{'sum_','mean_'});
+vars = erase(vars,{'sum_'});
 times_conf_country.Properties.VariableNames = vars;
 vars1 = times_conf_country1.Properties.VariableNames;
 vars1 = regexprep(vars1,"^(sum_)(?=L(a|o))","remove_");
-vars1 = regexprep(vars1,"^(mean_)(?=[0-9])","remove_");
-vars1 = erase(vars1,{'sum_','mean_'});
+vars1 = erase(vars1,{'sum_'});
 times_conf_country1.Properties.VariableNames = vars1;
 infectedtable = removevars(times_conf_country,[{'GroupCount'},vars(contains(vars,"remove_"))]);
 countrytable = infectedtable(strcmp(infectedtable.("Country_Region"),country), :);
 deathtable = removevars(times_conf_country1,[{'GroupCount'},vars1(contains(vars1,"remove_"))]);
 countrytable1 = deathtable(strcmp(deathtable.("Country_Region"),country), :);
-countrytable = countrytable(:,4:end);
-countrytable1 = countrytable1(:,4:end);
+countrytable = countrytable(:,2:end);
+countrytable1 = countrytable1(:,2:end);
 cols2 = size(countrytable1);
 cols1 = size(countrytable);
 Countrytotaldead = zeros(1,cols2(2));
@@ -190,13 +189,13 @@ if world_enabled == 1
     countries = groupsummary(times_conf_country,"Country_Region", "max");
     vars = countries.Properties.VariableNames;
     countries = removevars(countries,[{'GroupCount'},vars(contains(vars,"remove"))]);
-    countries1 = countries(:,5:end);
+    countries1 = countries(:,3:end);
     cols1 = size(countries1);
     Countrytotalinfected = zeros(cols1(1),cols1(2));
     countries2 = groupsummary(times_conf_country1,"Country_Region", "max");
     vars = countries2.Properties.VariableNames;
     countries2 = removevars(countries2,[{'GroupCount'},vars(contains(vars,"remove"))]);
-    countries3 = countries2(:,5:end);
+    countries3 = countries2(:,3:end);
     cols2 = size(countries3);
     Countrytotaldead = zeros(cols2(1),cols2(2));
     for i = 1:cols1(1)
