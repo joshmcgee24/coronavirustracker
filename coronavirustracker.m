@@ -11,9 +11,9 @@
 % previous days data
 
 %important settings:
-country = "Italy"; %specify country to model
+country = "US"; %specify country to model
 prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
-world_enabled = 1; %set to 1 to enable world statistics, 0 to turn off
+world_enabled = 0; %set to 1 to enable world statistics, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
 result=webread('https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv&filename=time_series_covid19_confirmed_global.csv','options','table');
@@ -115,7 +115,7 @@ warning('off','all')
 Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
 time_1 = first_day:last_day;
-
+caseperday = diff(Countrytotalinfected)./diff(day(time_1));
 if prediction_enabled == 1
     beta0 = [max(Countrytotalinfected) 0.5 max(Countrytotalinfected)];
     [x, y] = prepareCurveData([0:1:daytotal], Countrytotalinfected);
