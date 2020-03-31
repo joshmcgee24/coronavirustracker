@@ -138,7 +138,7 @@ if prediction_enabled == 1
     plot(time,Countrytotalinfected,'b*','MarkerSize',7)
     hold on
     title(sprintf('COVID-19 Epidemic Simulation for %s',country))
-    str1 = sprintf('Total Projected: %0.0f | Total Projected Dead: %0.0f | R^2 = %0.3f \n Date: %s | Toal Cases: %0.0f | Total Deaths: %0.0f',K,Countrydeathrate*K,model.Rsquared.Adjusted,datestr(time(end)),Countrytotalinfected(end),Countrytotaldead(end));
+    str1 = sprintf('Total Projected: %0.0f | Total Projected Dead: %0.0f | R^2 = %0.3f \n Date: %s | Toal Cases: %0.0f | Total Deaths: %0.0f',K,Countrydeathrate/100*K,model.Rsquared.Adjusted,datestr(time(end)),Countrytotalinfected(end),Countrytotaldead(end));
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str1);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
     legend('Predicted Cases','Data from John Hopkins','location','southwest')
