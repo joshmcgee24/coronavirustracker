@@ -136,6 +136,7 @@ if prediction_enabled == 1
     fitinfected1 = feval(model,newtime);
     projected = fitinfected1(1,[numel(newdatetime)-(21-1)]:numel(newdatetime));
     projectedeaths = max(fitinfected1)*Countrydeathrate/100;
+    subplot(2,1,1)
     plot(newdatetime,fitinfected1,'r','LineWidth',2)
     hold on
     plot(time_1,Countrytotalinfected,'b*','MarkerSize',7)
@@ -144,21 +145,32 @@ if prediction_enabled == 1
     str1 = sprintf('Total Projected: %0.0f | Total Projected Dead: %0.0f | R^2 = %0.3f \n Date: %s | Toal Cases: %0.0f | Total Deaths: %0.0f',K,Countrydeathrate/100*K,model.Rsquared.Adjusted,datestr(time(end)),Countrytotalinfected(end),Countrytotaldead(end));
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str1);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
-    legend('Predicted Cases','Data from John Hopkins','location','southwest')
+    legend('Predicted Cases','Data from John Hopkins','location','best')
     xlabel('Date')
     ylabel('Projected - Confirmed Cases')
+    subplot(2,1,2)
+    plot(time_1(2:end),caseperday)
+    title(sprintf('Cases Per Day: %s',country))
+    xlabel('Date')
+    ylabel('Cases Per Day')
 else
+    subplot(2,1,1)
     plot(time_1,Countrytotalinfected,'b*','MarkerSize',7)
     hold on
     titlestr = sprintf('Coronavirus Cases in %s',string(country));
     title(titlestr)
     set(gca,'FontSize',11,'Fontweight','Bold')
-    legend('Data from John Hopkins','location','southwest')
+    legend('Data from John Hopkins','location','best')
     xlabel('Date')
     ylabel('Confirmed Cases')
     str2 = sprintf('Total Cases: %0.0f | Total Dead: %0.0f',round(max(Countrytotalinfected)),round(max(Countrytotaldead)));
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str2);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
+    subplot(2,1,2)
+    plot(time_1(2:end),caseperday)
+    title(sprintf('Cases Per Day: %s',country))
+    xlabel('Date')
+    ylabel('Cases Per Day')
 end
 caseperday = diff(Countrytotalinfected)./diff(day(time_1));
 timematrix = first_day:last_day;
