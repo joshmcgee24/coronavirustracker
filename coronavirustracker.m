@@ -13,7 +13,7 @@
 %important settings:
 country = "US"; %specify country to model
 prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
-world_enabled = 0; %set to 1 to enable world statistics, 0 to turn off
+world_enabled = 1; %set to 1 to enable world statistics, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
 result=webread('https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv&filename=time_series_covid19_confirmed_global.csv','options','table');
@@ -99,6 +99,7 @@ for i = 1:cols1(2)
     Countrytotaldead(i) = table2array(countrytable1(1,i));
 end
 infected = Countrytotalinfected;
+if prediction_enabled == 1
 startidx = zeros(length(infected));
 for i = 1:length(infected)
     if i == length(infected)
@@ -111,6 +112,8 @@ end
 startidx = find(startidx~=0, 1, 'first');
 Countrytotalinfected = Countrytotalinfected(startidx+1:end);
 first_day = first_day+days(startidx);
+else
+end
 warning('off','all')
 Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
@@ -145,7 +148,7 @@ if prediction_enabled == 1
     str1 = sprintf('Total Projected: %0.0f | Total Projected Dead: %0.0f | R^2 = %0.3f \n Date: %s | Toal Cases: %0.0f | Total Deaths: %0.0f',K,Countrydeathrate/100*K,model.Rsquared.Adjusted,datestr(time(end)),Countrytotalinfected(end),Countrytotaldead(end));
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str1);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
-    legend('Predicted Cases','Data from John Hopkins','location','best')
+    legend('Predicted Cases','Data from John Hopkins','location','southeast')
     xlabel('Date')
     ylabel('Projected - Confirmed Cases')
     subplot(2,1,2)
@@ -155,12 +158,12 @@ if prediction_enabled == 1
     ylabel('Cases Per Day')
 else
     subplot(2,1,1)
-    plot(time_1,Countrytotalinfected,'b*','MarkerSize',7)
+    plot(time_1,Countrytotalinfected,'b-','MarkerSize',7)
     hold on
     titlestr = sprintf('Coronavirus Cases in %s',string(country));
     title(titlestr)
     set(gca,'FontSize',11,'Fontweight','Bold')
-    legend('Data from John Hopkins','location','best')
+    legend('Data from John Hopkins','location','southeast')
     xlabel('Date')
     ylabel('Confirmed Cases')
     str2 = sprintf('Total Cases: %0.0f | Total Dead: %0.0f',round(max(Countrytotalinfected)),round(max(Countrytotaldead)));
