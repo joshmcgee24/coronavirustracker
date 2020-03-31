@@ -11,9 +11,9 @@
 % previous days data
 
 %important settings:
-country = "US"; %specify country to model
+country = "Italy"; %specify country to model
 prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
-world_enabled = 1; %set to 1 to enable world statistics, 0 to turn off
+world_enabled = 0; %set to 1 to enable world statistics, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
 result=webread('https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv&filename=time_series_covid19_confirmed_global.csv','options','table');
@@ -161,7 +161,7 @@ else
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
 end
 caseperday = diff(Countrytotalinfected)./diff(day(time_1));
-timematrix = firstday:last_day;
+timematrix = first_day:last_day;
 T = table(caseperday',time_1(2:end)');
 T.Properties.VariableNames = {(sprintf('New %s Cases',country)),sprintf('Date')};
 T
