@@ -104,14 +104,17 @@ for i = 1:length(infected)
     if i == length(infected)
         break
     end
-    if infected(i+1) > 1.5*infected(i) && infected(i) > 10
+    if infected(i+1) > 1.5*infected(i) && infected(i) > 50
         startidx(i) = i;
     end
 end
 startidx = find(startidx~=0, 1, 'first');
+Countrytotalinfected = Countrytotalinfected(startidx+1:end);
+first_day = first_day+days(startidx);
 warning('off','all')
 Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
+time_1 = first_day:last_day;
 
 if prediction_enabled == 1
     beta0 = [max(Countrytotalinfected) 0.5 max(Countrytotalinfected)];
@@ -135,7 +138,7 @@ if prediction_enabled == 1
     projectedeaths = max(fitinfected1)*Countrydeathrate/100;
     plot(newdatetime,fitinfected1,'r','LineWidth',2)
     hold on
-    plot(time,Countrytotalinfected,'b*','MarkerSize',7)
+    plot(time_1,Countrytotalinfected,'b*','MarkerSize',7)
     hold on
     title(sprintf('COVID-19 Epidemic Simulation for %s',country))
     str1 = sprintf('Total Projected: %0.0f | Total Projected Dead: %0.0f | R^2 = %0.3f \n Date: %s | Toal Cases: %0.0f | Total Deaths: %0.0f',K,Countrydeathrate/100*K,model.Rsquared.Adjusted,datestr(time(end)),Countrytotalinfected(end),Countrytotaldead(end));
@@ -145,7 +148,7 @@ if prediction_enabled == 1
     xlabel('Date')
     ylabel('Projected - Confirmed Cases')
 else
-    plot(time,Countrytotalinfected,'b*','MarkerSize',7)
+    plot(time_1,Countrytotalinfected,'b*','MarkerSize',7)
     hold on
     titlestr = sprintf('Coronavirus Cases in %s',string(country));
     title(titlestr)
@@ -157,10 +160,9 @@ else
     T = text(min(get(gca,'xlim')), max(get(gca,'ylim')), str2);
     set(T, 'fontsize', 10, 'verticalalignment', 'top', 'horizontalalignment', 'left');
 end
-caseperday = diff(Countrytotalinfected)./diff(day(time));
-firstday = datetime(2020,3,10);
+caseperday = diff(Countrytotalinfected)./diff(day(time_1));
 timematrix = firstday:last_day;
-T = table(caseperday(1,48:numel(Countrytotalinfected)-1)',timematrix');
+T = table(caseperday',time_1(2:end)');
 T.Properties.VariableNames = {(sprintf('New %s Cases',country)),sprintf('Date')};
 T
 if prediction_enabled == 1
