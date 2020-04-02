@@ -12,7 +12,7 @@
 
 %important settings:
 country = "US"; %specify country to model
-prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn off
+prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn of"
 world_enabled = 1; %set to 1 to enable world statistics, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
@@ -152,7 +152,7 @@ if prediction_enabled == 1
     xlabel('Date')
     ylabel('Projected - Confirmed Cases')
     subplot(2,1,2)
-    plot(time_1(2:end),caseperday)
+    plot(time_1(3:end),caseperday(1:end-1))
     title(sprintf('Cases Per Day: %s',country))
     xlabel('Date')
     ylabel('Cases Per Day')
@@ -177,8 +177,8 @@ else
 end
 caseperday = diff(Countrytotalinfected)./diff(day(time_1));
 timematrix = first_day:last_day;
-T = table(caseperday',time_1(2:end)');
-T.Properties.VariableNames = {(sprintf('New %s Cases',country)),sprintf('Date')};
+T = table(time_1(3:end)',caseperday(1:end-1)');
+T.Properties.VariableNames = {sprintf('Date'),(sprintf('New %s Cases',country))};
 T
 if prediction_enabled == 1
     fprintf('--------- %s Data ----------------- \n',country)
@@ -226,7 +226,7 @@ if world_enabled == 1
         end
     end
     num_countries = numel(countries(:,1));
-    T = table(countries(:,1),Countrytotalinfected(1:num_countries,end));
+    T = table(table2array(countries(:,1)),Countrytotalinfected(1:num_countries,end));
     T.Properties.VariableNames = {'Country','Cases'};
     sortrows(T,[2],{'descend'})
     [temp,originalpos] = sort(max(Countrytotalinfected')', 'descend' );
@@ -261,7 +261,7 @@ if world_enabled == 1
     title(str1)
     hold off
     
-    T1 = table(countries(:,1),max(Countrytotaldead')');
+    T1 = table(table2array(countries(:,1)),max(Countrytotaldead')');
     T1.Properties.VariableNames = {'Country','Dead'};
     sortrows(T1,[2],{'descend'})
     [temp1,originalpos1] = sort(max(Countrytotaldead')', 'descend' );
