@@ -118,7 +118,7 @@ warning('off','all')
 Countrydeathrate = max(Countrytotaldead)/max(Countrytotalinfected)*100;
 daytotal = abs(datenum(last_day) - datenum(first_day));
 time_1 = first_day:last_day;
-caseperday = diff(Countrytotalinfected)./diff(day(time_1));
+caseperday = diff(Countrytotalinfected);
 if prediction_enabled == 1
     beta0 = [max(Countrytotalinfected) 0.5 max(Countrytotalinfected)];
     [x, y] = prepareCurveData([0:1:daytotal], Countrytotalinfected);
@@ -152,7 +152,7 @@ if prediction_enabled == 1
     xlabel('Date')
     ylabel('Projected - Confirmed Cases')
     subplot(2,1,2)
-    plot(time_1(3:end),caseperday(1:end-1))
+    plot(time_1(2:end),caseperday)
     title(sprintf('Cases Per Day: %s',country))
     xlabel('Date')
     ylabel('Cases Per Day')
@@ -175,9 +175,10 @@ else
     xlabel('Date')
     ylabel('Cases Per Day')
 end
-caseperday = diff(Countrytotalinfected)./diff(day(time_1));
+Countrytotalinfected;
+caseperday = diff(Countrytotalinfected);
 timematrix = first_day:last_day;
-T = table(time_1(3:end)',caseperday(1:end-1)');
+T = table(time_1(2:end)',caseperday');
 T.Properties.VariableNames = {sprintf('Date'),(sprintf('New %s Cases',country))};
 T
 if prediction_enabled == 1
