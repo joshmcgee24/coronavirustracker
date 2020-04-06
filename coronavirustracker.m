@@ -247,16 +247,21 @@ if world_enabled == 1
     legend(legendInfo,'location','northwest')
     
     infected = zeros(10,1);
-    for i = 1:10
+    for i = 1:11
         infected(i) = Countrytotalinfected(originalpos(i),end);
         legendInfo2{i} = sprintf('%s',countries{originalpos(i), 1});
+        if i == 11
+        infected(i) = sum(Countrytotalinfected(originalpos(i):end,end));
+        legendInfo2{i} = sprintf('Rest of World');
+        else
+        end
     end
     figure
     P = pie(infected,legendInfo2);
     hold on
     pText = findobj(P,'Type','text');
     percentValues = infected./(sum(infected))*100;
-    percentValues = mat2cell(percentValues',1,10);
+    percentValues = mat2cell(percentValues',1,11);
     txt = legendInfo2;
     str1 = sprintf('Proportion of Cases | Total World Cases: %0.0f | Total World Dead: %0.0f',sum(sum(Countrytotalinfected(:,end))),sum(sum(Countrytotaldead(:,end))));
     title(str1)
