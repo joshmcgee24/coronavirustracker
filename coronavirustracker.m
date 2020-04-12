@@ -12,7 +12,7 @@
 
 %important settings:
 country = "US"; %specify country to model
-prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn of"
+prediction_enabled = 0; %set to 1 for logistic model curve, 0 to turn of"
 world_enabled = 1; %set to 1 to enable world statistics, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
@@ -179,7 +179,7 @@ Countrytotalinfected;
 caseperday = diff(Countrytotalinfected);
 timematrix = first_day:last_day;
 T = table(time_1(2:end)',caseperday');
-T.Properties.VariableNames = {sprintf('Date'),(sprintf('New %s Cases',country))};
+T.Properties.VariableNames = {sprintf('Date'),(sprintf('New_%s_Cases',country))};
 T
 if prediction_enabled == 1
     fprintf('--------- %s Data ----------------- \n',country)
@@ -196,7 +196,7 @@ if prediction_enabled == 1
     fprintf(' estimated peak rate (cases/day): %d\n',dCpeak);
     fprintf(' estimated end of transition phase: %s  day: %d\n',dend,2*tpeak);
     T = table(round(projected)',round(projected'.*(Countrydeathrate/100)),newdatetime(1,[numel(newdatetime)-(21-1)]:numel(newdatetime))');
-    T.Properties.VariableNames = {(sprintf('Projected %s Cases',country)),(sprintf('Projected %s Deaths',country)),sprintf('Projected Date')};
+    T.Properties.VariableNames = {(sprintf('Projected_%s_Cases',country)),(sprintf('Projected_%s_Deaths',country)),sprintf('Projected Date')};
     T
 end
 fprintf('As of: %s : ----------------------------------\n',last_day)
