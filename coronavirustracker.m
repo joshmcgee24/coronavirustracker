@@ -12,7 +12,7 @@
 
 %important settings:
 country = "US"; %specify country to model
-prediction_enabled = 0; %set to 1 for logistic model curve, 0 to turn of"
+prediction_enabled = 1; %set to 1 for logistic model curve, 0 to turn of"
 world_enabled = 1; %set to 1 to enable world statistics, 0 to turn off
 
 %Obtaining and formating data - courtesy of Toshi Takeuchi - https://www.mathworks.com/matlabcentral/profile/authors/951521
@@ -105,8 +105,14 @@ for i = 1:length(infected)
     if i == length(infected)
         break
     end
-    if infected(i+1) > 1.5*infected(i) && infected(i) > 50
-        startidx(i) = i;
+    if max(infected) < 10000
+        if infected(i+1) > 1.5*infected(i) && infected(i) > 10
+            startidx(i) = i;
+        end
+    else
+        if infected(i+1) > 1.5*infected(i) && infected(i) > 50
+            startidx(i) = i;
+        end
     end
 end
 startidx = find(startidx~=0, 1, 'first');
