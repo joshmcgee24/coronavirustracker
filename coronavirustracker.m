@@ -240,15 +240,17 @@ if world_enabled == 1
     
     figure
     %plot five countries with most cases
-    for i = 1:5
-        plot(time,Countrytotalinfected(originalpos(i),:),'LineWidth',4);
+    for i = 1:10
+        plot(time,Countrytotalinfected(originalpos(i),:),'LineWidth',3);
         hold on
         legendInfo{i} = sprintf('%s',countries{originalpos(i), 1});
     end
     t = floor(now);
     d = datetime(t,'ConvertFrom','datenum');
     xlim([datetime(2020,2,15) d])
-    title('5 Countries with Most COVID-19 Cases')
+    title('10 Countries with Most COVID-19 Cases')
+    xlabel('Date')
+    ylabel('Confirmed Cases')
     set(gca,'FontSize',9,'Fontweight','Bold')
     legend(legendInfo,'location','northwest')
     
@@ -257,7 +259,7 @@ if world_enabled == 1
         infected(i) = Countrytotalinfected(originalpos(i),end);
         legendInfo2{i} = sprintf('%s',countries{originalpos(i), 1});
         if i == 11
-        infected(i) = sum(Countrytotalinfected(originalpos(i):end,end));
+        infected(i) = sum(sum(Countrytotalinfected(:,end)))-sum(infected(1:10));
         legendInfo2{i} = sprintf('Rest of World');
         else
         end
@@ -280,13 +282,15 @@ if world_enabled == 1
     
     figure
     %plot five countries with most deaths
-    for i = 1:5
-        plot(time,Countrytotaldead(originalpos1(i),:),'LineWidth',4);
+    for i = 1:10
+        plot(time,Countrytotaldead(originalpos1(i),:),'LineWidth',3);
         hold on
         legendInfo1{i} = sprintf('%s',countries{originalpos1(i), 1});
     end
     xlim([datetime(2020,2,15) d])
-    title('5 Countries with Most COVID-19 Deaths')
+    title('10 Countries with Most COVID-19 Deaths')
+    xlabel('Date')
+    ylabel('Confirmed Deaths')
     set(gca,'FontSize',9,'Fontweight','Bold')
     legend(legendInfo1,'location','northwest')
     hold off
